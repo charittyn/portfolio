@@ -705,3 +705,8 @@ button { cursor: pointer; }
     width: 166px;
   }
 }
+
+/* v7: keep numbered navigation on mobile only */
+@media (min-width: 981px) {
+  .mobile-nav-links a span { display: none; }
+}
