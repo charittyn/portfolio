@@ -111,3 +111,13 @@
 ## v6
 - Replaced the Instagram profile link with Threads (`https://www.threads.com/@charity_nkonyedi`) across the site social navigation and structured data.
 - Updated the privacy notice social-platform reference from Instagram to Threads.
+
+## v7 — Desktop navigation cleanup
+- Removed numeric prefixes from desktop navigation only.
+- Retained numbered navigation hierarchy in the mobile off-canvas menu.
+
+## v8 — Mobile drawer control refinement
+- Removed the duplicate visible close control on mobile.
+- The header hamburger now morphs into a clear X while the drawer is open.
+- The same button remains fixed in the same top-right control area, eliminating overlap.
+- Added CSS/JS cache-busting query versions for reliable live deployment updates.

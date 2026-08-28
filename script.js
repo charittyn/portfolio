@@ -20,9 +20,10 @@
       }
 
       if (open) {
-        window.setTimeout(() => navClose?.focus(), 220);
-      } else if (document.activeElement === navClose) {
-        navToggle.focus();
+        // The same visible toggle becomes the close control, so keep focus on it.
+        window.setTimeout(() => navToggle.focus({ preventScroll: true }), 60);
+      } else if (navLinks.contains(document.activeElement) || document.activeElement === navClose) {
+        navToggle.focus({ preventScroll: true });
       }
     };
 
