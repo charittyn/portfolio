@@ -1,18 +1,48 @@
 (() => {
   const navToggle = document.querySelector('.nav-toggle');
   const navLinks = document.querySelector('.nav-links');
+  const navClose = document.querySelector('.mobile-nav-close');
+  const navBackdrop = document.querySelector('.nav-backdrop');
 
   if (navToggle && navLinks) {
-    navToggle.addEventListener('click', () => {
-      const isOpen = navLinks.classList.toggle('open');
-      navToggle.setAttribute('aria-expanded', String(isOpen));
-    });
+    const setNavState = (open) => {
+      navLinks.classList.toggle('open', open);
+      navBackdrop?.classList.toggle('open', open);
+      document.body.classList.toggle('nav-open', open);
+      navToggle.setAttribute('aria-expanded', String(open));
+      navToggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+      navBackdrop?.setAttribute('aria-hidden', String(!open));
+
+      if (window.matchMedia('(max-width: 980px)').matches) {
+        navLinks.setAttribute('aria-hidden', String(!open));
+      } else {
+        navLinks.setAttribute('aria-hidden', 'false');
+      }
+
+      if (open) {
+        window.setTimeout(() => navClose?.focus(), 220);
+      } else if (document.activeElement === navClose) {
+        navToggle.focus();
+      }
+    };
+
+    navToggle.addEventListener('click', () => setNavState(!navLinks.classList.contains('open')));
+    navClose?.addEventListener('click', () => setNavState(false));
+    navBackdrop?.addEventListener('click', () => setNavState(false));
+
     navLinks.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('open');
-        navToggle.setAttribute('aria-expanded', 'false');
-      });
+      link.addEventListener('click', () => setNavState(false));
     });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && navLinks.classList.contains('open')) setNavState(false);
+    });
+
+    window.addEventListener('resize', () => {
+      if (!window.matchMedia('(max-width: 980px)').matches) setNavState(false);
+    });
+
+    setNavState(false);
   }
 
   const filterButtons = document.querySelectorAll('.filter-btn');
@@ -30,12 +60,22 @@
 
   const form = document.querySelector('#contact-form');
   const status = document.querySelector('#form-status');
+  const successPanel = document.querySelector('#form-success-panel');
+  const sendAnother = document.querySelector('#send-another-message');
+
   if (form && status) {
+    const setSubmitting = (submit, submitting) => {
+      submit.disabled = submitting;
+      submit.setAttribute('aria-disabled', String(submitting));
+      submit.textContent = submitting ? 'Sending…' : 'Send message';
+    };
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const submit = form.querySelector('button[type="submit"]');
-      submit.disabled = true;
-      submit.textContent = 'Sending…';
+      if (!submit) return;
+
+      setSubmitting(submit, true);
       status.className = 'form-status';
       status.textContent = 'Sending your message…';
 
@@ -45,18 +85,35 @@
           body: new FormData(form),
           headers: { Accept: 'application/json' }
         });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok || result.success === false) throw new Error('Submission failed');
+
+        const result = await response.json().catch(() => null);
+        if (!response.ok || (result && result.success === false)) {
+          throw new Error(result?.message || 'Submission failed');
+        }
+
         form.reset();
-        status.className = 'form-status success';
-        status.textContent = 'Thanks. Your message has been sent successfully.';
+        status.textContent = '';
+        form.hidden = true;
+        if (successPanel) {
+          successPanel.hidden = false;
+          successPanel.focus({ preventScroll: true });
+          successPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       } catch (error) {
         status.className = 'form-status error';
-        status.innerHTML = 'I could not send that message right now. Please email <a href="mailto:hello@charittyn.com">hello@charittyn.com</a> instead.';
+        status.innerHTML = 'I could not confirm the submission. Please try again, or email <a href="mailto:hello@charittyn.com">hello@charittyn.com</a>.';
       } finally {
-        submit.disabled = false;
-        submit.textContent = 'Send message';
+        setSubmitting(submit, false);
       }
+    });
+  }
+
+  if (sendAnother && form && successPanel) {
+    sendAnother.addEventListener('click', () => {
+      successPanel.hidden = true;
+      form.hidden = false;
+      const firstField = form.querySelector('input:not([type="hidden"]):not(.hidden-field)');
+      firstField?.focus();
     });
   }
 

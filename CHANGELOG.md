@@ -93,3 +93,21 @@
 - Reduced the primary header logo from 96px to 80px wide.
 - Reduced the footer logo from 132px to 108px wide.
 - Reduced mobile logo sizing to 72px in the header and 96px in the footer.
+## v4 — Mobile UX + form feedback refinement
+- Repositioned mobile hero floating cards so they frame the portrait instead of covering the face/eyes.
+- Rebuilt mobile navigation as a full-viewport-height off-canvas drawer with smooth side-slide animation.
+- Increased mobile menu spacing, hierarchy, CTA prominence, and added backdrop/close/Escape behavior.
+- Locks page scroll while the mobile menu is open.
+- Added a prominent success state after successful contact-form submission, with a send-another-message action.
+- Made Web3Forms response handling more tolerant while preserving failure feedback.
+
+
+## v5 mobile hero refinement
+- Restored the lower audience-growth card to its original mobile position.
+- Restored the original compact hero spacing on mobile.
+- Moved only the upper “Strategy + execution” card slightly higher to keep it clear of the subject’s eyes.
+
+
+## v6
+- Replaced the Instagram profile link with Threads (`https://www.threads.com/@charity_nkonyedi`) across the site social navigation and structured data.
+- Updated the privacy notice social-platform reference from Instagram to Threads.
